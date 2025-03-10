@@ -35,6 +35,11 @@ public class ComplaintController {
     public Complaint updateStatus(@PathVariable Long id, @RequestBody StatusUpdateRequest request) {
         return complaintService.updateComplaintStatus(id, request.getStatus());
     }
+
+    @PutMapping("/{id}")
+    public Complaint updateComplaint(@PathVariable Long id, @RequestBody Complaint updatedComplaint) {
+        return complaintService.updateComplaint(id, updatedComplaint);
+    }
 }
 
 class StatusUpdateRequest {

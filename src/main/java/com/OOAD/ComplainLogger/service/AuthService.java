@@ -3,7 +3,9 @@ package com.OOAD.ComplainLogger.service;
 import com.OOAD.ComplainLogger.model.User;
 import com.OOAD.ComplainLogger.model.Role;
 import com.OOAD.ComplainLogger.repository.UserRepository;
+import com.OOAD.ComplainLogger.exception.DuplicateUsernameException;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 
 @Service
 public class AuthService {
@@ -14,6 +16,9 @@ public class AuthService {
     }
 
     public User registerUser(String username, String password, Role role) {
+        if (userRepository.findByUsername(username) != null) {
+            throw new DuplicateUsernameException(username);
+        }
         User user = new User(username, password, role);
         return userRepository.save(user);
     }
@@ -21,7 +26,8 @@ public class AuthService {
     public User loginUser(String username, String password) {
         User user = userRepository.findByUsername(username);
         if (user != null && user.getPassword().equals(password)) {
-            return user;
+            user.setLastLoginDate(LocalDateTime.now());
+            return userRepository.save(user);
         }
         return null;
     }

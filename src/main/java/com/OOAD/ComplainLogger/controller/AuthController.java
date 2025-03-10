@@ -3,6 +3,8 @@ package com.OOAD.ComplainLogger.controller;
 import com.OOAD.ComplainLogger.model.User;
 import com.OOAD.ComplainLogger.service.AuthService;
 import com.OOAD.ComplainLogger.model.Role;
+import com.OOAD.ComplainLogger.exception.DuplicateUsernameException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,12 +18,18 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody RegisterRequest request) {
-        return authService.registerUser(
-            request.getUsername(),
-            request.getPassword(),
-            request.getRole()
-        );
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        try {
+            User user = authService.registerUser(
+                request.getUsername(),
+                request.getPassword(),
+                request.getRole()
+            );
+            return ResponseEntity.ok(user);
+        } catch (DuplicateUsernameException e) {
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse("Username already exists: " + request.getUsername()));
+        }
     }
 
     @PostMapping("/login")
@@ -53,4 +61,16 @@ class RegisterRequest {
     public void setPassword(String password) { this.password = password; }
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+}
+
+class ErrorResponse {
+    private String message;
+    
+    public ErrorResponse(String message) {
+        this.message = message;
+    }
+    
+    public String getMessage() {
+        return message;
+    }
 }
