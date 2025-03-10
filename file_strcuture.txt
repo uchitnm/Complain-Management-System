@@ -1,0 +1,24 @@
+hostel-complaint-system/
+│── src/
+│   ├── main/
+│   │   ├── java/com/hostel/
+│   │   │   ├── controller/
+│   │   │   │   ├── AuthController.java
+│   │   │   │   ├── ComplaintController.java
+│   │   │   │   ├── WorkerController.java
+│   │   │   ├── model/
+│   │   │   │   ├── User.java
+│   │   │   │   ├── Complaint.java
+│   │   │   │   ├── Role.java
+│   │   │   │   ├── ComplaintStatus.java
+│   │   │   ├── repository/
+│   │   │   │   ├── UserRepository.java
+│   │   │   │   ├── ComplaintRepository.java
+│   │   │   ├── service/
+│   │   │   │   ├── AuthService.java
+│   │   │   │   ├── ComplaintService.java
+│   │   │   ├── HostelComplaintApplication.java
+│   ├── resources/
+│   │   ├── application.properties
+│── pom.xml
+│── README.md
