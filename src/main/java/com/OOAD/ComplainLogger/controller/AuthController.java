@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/auth")  // Changed from "/api/users" to "/api/auth"
 @CrossOrigin
 public class AuthController {
     private final AuthService authService;
@@ -33,8 +33,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public User login(@RequestBody LoginRequest loginRequest) {
-        return authService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {  // Changed return type
+        User user = authService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.status(401).body(new ErrorResponse("Invalid credentials"));
     }
 }
 
