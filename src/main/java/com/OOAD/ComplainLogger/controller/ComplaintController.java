@@ -92,6 +92,14 @@ public class ComplaintController {
             return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }
     }
+
+    @GetMapping("/filter")
+    public List<Complaint> getFilteredComplaints(
+        @RequestParam(required = false) String student,
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) ComplaintStatus status) {
+        return complaintService.getFilteredComplaints(student, category, status);
+    }
 }
 
 class StatusUpdateRequest {

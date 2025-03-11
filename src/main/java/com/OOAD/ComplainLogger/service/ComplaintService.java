@@ -35,7 +35,7 @@ public class ComplaintService {
         if (worker == null || worker.getRole() != Role.WORKER) {
             throw new RuntimeException("Invalid worker username");
         }
-        return complaintRepository.findByWorkerUsernameOrCategoryAndStatus(
+        return complaintRepository.findWorkerComplaints(
             username,
             worker.getWorkerCategory(),
             ComplaintStatus.OPEN
@@ -109,9 +109,17 @@ public class ComplaintService {
         Complaint existingComplaint = complaintRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Complaint not found"));
         
+        // Keep original student and worker information
+        String originalStudent = existingComplaint.getStudentUsername();
+        String originalWorker = existingComplaint.getWorkerUsername();
+        
         existingComplaint.setCategory(updatedComplaint.getCategory());
         existingComplaint.setDescription(updatedComplaint.getDescription());
         existingComplaint.setStatus(updatedComplaint.getStatus());
+        
+        // Preserve original user information
+        existingComplaint.setStudentUsername(originalStudent);
+        existingComplaint.setWorkerUsername(originalWorker);
         
         if (updatedComplaint.getStatus() == ComplaintStatus.RESOLVED) {
             existingComplaint.setResolvedAt(LocalDateTime.now());
@@ -124,5 +132,12 @@ public class ComplaintService {
         Complaint complaint = complaintRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Complaint not found"));
         complaintRepository.delete(complaint);
+    }
+
+    public List<Complaint> getFilteredComplaints(String student, String category, ComplaintStatus status) {
+        if (student == null && category == null && status == null) {
+            return complaintRepository.findAll();
+        }
+        return complaintRepository.findWithFilters(student, category, status);
     }
 }

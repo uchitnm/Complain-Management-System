@@ -12,10 +12,14 @@ async function applyFilters() {
     const status = document.getElementById('statusFilter').value;
 
     try {
-        const response = await fetch('/api/complaints', {
+        const queryParams = new URLSearchParams();
+        if (student) queryParams.append('student', student);
+        if (category) queryParams.append('category', category);
+        if (status) queryParams.append('status', status);
+
+        const response = await fetch(`/api/complaints/filter?${queryParams}`, {
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Accept': 'application/json'
             }
         });
 
@@ -23,16 +27,8 @@ async function applyFilters() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        let complaints = await response.json();
+        const complaints = await response.json();
         currentComplaints = complaints;
-
-        // Apply filters
-        complaints = complaints.filter(c => 
-            (!student || c.studentUsername.toLowerCase().includes(student.toLowerCase())) &&
-            (!category || c.category === category) &&
-            (!status || c.status === status)
-        );
-
         displayComplaints(complaints);
     } catch (error) {
         console.error('Error:', error);
@@ -98,7 +94,8 @@ async function saveComplaint() {
     const updatedComplaint = {
         category: document.getElementById('modalCategory').value,
         description: document.getElementById('modalDescription').value,
-        status: document.getElementById('modalStatus').value
+        status: document.getElementById('modalStatus').value,
+        studentUsername: document.getElementById('modalStudent').value
     };
 
     try {
@@ -110,15 +107,16 @@ async function saveComplaint() {
             body: JSON.stringify(updatedComplaint)
         });
 
-        if (response.ok) {
-            document.getElementById('complaintModal').style.display = 'none';
-            applyFilters();
-        } else {
-            alert('Failed to update complaint');
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to update complaint');
         }
+
+        document.getElementById('complaintModal').style.display = 'none';
+        applyFilters();
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to update complaint');
+        alert(error.message);
     }
 }
 

@@ -22,7 +22,7 @@ async function loadWorkerComplaints() {
 function displayComplaints(complaints) {
     const complaintsContainer = document.getElementById('complaints-list');
     complaintsContainer.innerHTML = complaints.map(complaint => `
-        <div class="complaint-item">
+        <div class="complaint-item ${complaint.status.toLowerCase()}">
             <h3>${complaint.category}</h3>
             <p>${complaint.description}</p>
             <p>Status: ${complaint.status}</p>
@@ -31,7 +31,8 @@ function displayComplaints(complaints) {
             ${complaint.resolvedAt ? 
                 `<p>Resolved: ${new Date(complaint.resolvedAt).toLocaleDateString()}</p>` : ''}
             <div class="form-group">
-                <select onchange="updateStatus('${complaint.id}', this.value)">
+                <select onchange="updateStatus('${complaint.id}', this.value)"
+                    ${complaint.status === 'RESOLVED' ? 'disabled' : ''}>
                     <option value="OPEN" ${complaint.status === 'OPEN' ? 'selected' : ''}>Open</option>
                     <option value="IN_PROGRESS" ${complaint.status === 'IN_PROGRESS' ? 'selected' : ''}>In Progress</option>
                     <option value="RESOLVED" ${complaint.status === 'RESOLVED' ? 'selected' : ''}>Resolved</option>
@@ -51,13 +52,14 @@ async function updateStatus(complaintId, status) {
             body: JSON.stringify({ status }),
         });
 
-        if (response.ok) {
-            loadWorkerComplaints();
-        } else {
-            alert('Failed to update status');
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to update status');
         }
+
+        await loadWorkerComplaints();
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to update status');
+        alert(error.message);
     }
 }

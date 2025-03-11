@@ -15,11 +15,18 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public User registerUser(String username, String password, Role role) {
+    public User registerUser(String username, String password, Role role, String workerCategory) {
         if (userRepository.findByUsername(username) != null) {
             throw new DuplicateUsernameException(username);
         }
-        User user = new User(username, password, role);
+        
+        User user;
+        if (role == Role.WORKER && workerCategory != null) {
+            user = new User(username, password, role, workerCategory);
+        } else {
+            user = new User(username, password, role);
+        }
+        
         return userRepository.save(user);
     }
 

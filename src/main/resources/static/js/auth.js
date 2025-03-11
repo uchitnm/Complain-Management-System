@@ -30,8 +30,9 @@ async function register(event) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const role = document.getElementById('role').value;
-    const workerCategory = role === 'WORKER' ? 
-        document.getElementById('workerCategory').value : null;
+    const workerCategoryElement = document.getElementById('workerCategory');
+    const workerCategory = (role === 'WORKER' && workerCategoryElement) ? 
+        workerCategoryElement.value : null;
 
     try {
         const response = await fetch('/api/auth/register', {
@@ -48,14 +49,14 @@ async function register(event) {
         });
 
         const data = await response.json();
-        if (response.ok) {
-            alert('Registration successful! Please login.');
-            window.location.href = '/login.html';
-        } else {
-            alert(data.message || 'Registration failed');
+        if (!response.ok) {
+            throw new Error(data.message || 'Registration failed');
         }
+
+        alert('Registration successful! Please login.');
+        window.location.href = '/login.html';
     } catch (error) {
         console.error('Registration error:', error);
-        alert('Registration failed');
+        alert(error.message);
     }
 }

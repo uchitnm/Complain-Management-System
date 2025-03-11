@@ -24,12 +24,13 @@ public class AuthController {
             User user = authService.registerUser(
                 request.getUsername(),
                 request.getPassword(),
-                request.getRole()
+                request.getRole(),
+                request.getWorkerCategory()
             );
             return ResponseEntity.ok(user);
         } catch (DuplicateUsernameException e) {
             return ResponseEntity.badRequest()
-                .body(new ErrorResponse("Username already exists: " + request.getUsername()));
+                .body(new ErrorResponse(e.getMessage()));
         }
     }
 
@@ -58,7 +59,12 @@ class RegisterRequest {
     private String username;
     private String password;
     private Role role;
+    private String workerCategory;
 
+    // Add getter and setter for workerCategory
+    public String getWorkerCategory() { return workerCategory; }
+    public void setWorkerCategory(String workerCategory) { this.workerCategory = workerCategory; }
+    
     // Getters and setters
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
