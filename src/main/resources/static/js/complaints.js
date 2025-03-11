@@ -1,6 +1,10 @@
 async function submitComplaint(event) {
     event.preventDefault();
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = checkAuth();
+    if (!user || user.role !== 'STUDENT') {
+        window.location.href = '/login.html';
+        return;
+    }
     const category = document.getElementById('category').value;
     const description = document.getElementById('description').value;
 
@@ -30,7 +34,11 @@ async function submitComplaint(event) {
 }
 
 async function loadComplaints() {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = checkAuth();
+    if (!user || user.role !== 'STUDENT') {
+        window.location.href = '/login.html';
+        return;
+    }
     try {
         const response = await fetch(`/api/complaints/student/${user.username}`);
         const complaints = await response.json();

@@ -60,3 +60,17 @@ async function register(event) {
         alert(error.message);
     }
 }
+
+function checkAuth() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) {
+        window.location.href = '/login.html';
+        return null;
+    }
+    return user;
+}
+
+function logout() {
+    localStorage.removeItem('user');
+    window.location.href = '/login.html';
+}

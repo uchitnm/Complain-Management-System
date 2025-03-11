@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+    <button onclick="logout()" class="btn logout-btn">Logout</button>
     <div class="container">
         <div class="card">
             <h2>My Assigned Complaints</h2>
@@ -15,6 +16,7 @@
             </div>
         </div>
     </div>
+    <script src="/js/auth.js"></script>
     <script src="/js/worker-complaints.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', loadWorkerComplaints);

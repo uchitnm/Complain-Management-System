@@ -1,5 +1,5 @@
 async function loadWorkerComplaints() {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = checkAuth();
     if (!user || user.role !== 'WORKER') {
         window.location.href = '/login.html';
         return;

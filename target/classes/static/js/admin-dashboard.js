@@ -50,14 +50,16 @@ function displayComplaints(complaints) {
                 `<p>Resolved: ${new Date(complaint.resolvedAt).toLocaleDateString()}</p>` : ''}
             <div class="button-group">
                 <button onclick="viewComplaint(${complaint.id})" class="btn btn-primary">View/Edit</button>
-                <button onclick="autoAssignWorker(${complaint.id})" 
-                    ${complaint.workerUsername ? 'disabled' : ''} class="btn btn-primary">
-                    Auto-assign Worker
-                </button>
-            </div>
+                </div>
         </div>
     `).join('');
 }
+
+{/* <button type="button" class="btn btn-danger" onclick="deleteComplaint()">Delete</button> */}
+{/* <button onclick="autoAssignWorker(${complaint.id})" 
+${complaint.workerUsername ? 'disabled' : ''} class="btn btn-primary">
+Auto-assign Worker
+</button> */}
 
 async function autoAssignWorker(complaintId) {
     try {
