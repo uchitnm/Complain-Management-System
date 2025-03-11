@@ -20,10 +20,22 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
         String category, 
         ComplaintStatus status
     );
+
+    @Query("SELECT c FROM Complaint c WHERE " +
+           "c.workerUsername = :workerUsername OR " +
+           "(c.category = :category AND c.status = 'OPEN' AND c.workerUsername IS NULL)")
     List<Complaint> findByWorkerUsernameOrCategoryAndStatusNot(
-        String workerUsername, 
-        String category, 
-        ComplaintStatus status
+        @Param("workerUsername") String workerUsername,
+        @Param("category") String category,
+        @Param("status") ComplaintStatus status
+    );
+
+    @Query("SELECT c FROM Complaint c WHERE " +
+           "c.workerUsername = :workerUsername OR " +
+           "(c.category = :category AND c.status = 'OPEN' AND c.workerUsername IS NULL)")
+    List<Complaint> findByWorkerUsernameOrAvailableComplaints(
+        @Param("workerUsername") String workerUsername,
+        @Param("category") String category
     );
 
     @Query("SELECT c FROM Complaint c WHERE " +

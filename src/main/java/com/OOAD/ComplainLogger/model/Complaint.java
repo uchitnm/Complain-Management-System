@@ -30,6 +30,12 @@ public class Complaint {
     @Column
     private String workerUsername;
 
+    @Column
+    private String workerComments;
+
+    @Column
+    private LocalDateTime lastUpdated;
+
     // Constructors
     public Complaint() {
         this.createdAt = LocalDateTime.now();
@@ -102,5 +108,21 @@ public class Complaint {
 
     public void setWorkerUsername(String workerUsername) {
         this.workerUsername = workerUsername;
+    }
+
+    public String getWorkerComments() {
+        return workerComments;
+    }
+
+    public void setWorkerComments(String workerComments) {
+        this.workerComments = workerComments;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

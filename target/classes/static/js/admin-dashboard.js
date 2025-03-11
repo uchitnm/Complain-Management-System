@@ -39,7 +39,7 @@ async function applyFilters() {
 function displayComplaints(complaints) {
     const complaintsContainer = document.getElementById('complaints-list');
     complaintsContainer.innerHTML = complaints.map(complaint => `
-        <div class="complaint-item">
+        <div class="complaint-item ${complaint.status.toLowerCase()}">
             <h3>${complaint.category}</h3>
             <p>${complaint.description}</p>
             <p>Status: ${complaint.status}</p>
@@ -48,9 +48,20 @@ function displayComplaints(complaints) {
             <p>Created: ${new Date(complaint.createdAt).toLocaleDateString()}</p>
             ${complaint.resolvedAt ? 
                 `<p>Resolved: ${new Date(complaint.resolvedAt).toLocaleDateString()}</p>` : ''}
+            ${complaint.workerComments ? `
+                <div class="worker-comments">
+                    <h4>Worker Notes:</h4>
+                    <p>${complaint.workerComments}</p>
+                </div>
+            ` : ''}
+            <p class="last-updated">Last Updated: ${new Date(complaint.lastUpdated || complaint.createdAt).toLocaleString()}</p>
             <div class="button-group">
                 <button onclick="viewComplaint(${complaint.id})" class="btn btn-primary">View/Edit</button>
-                </div>
+                <button onclick="autoAssignWorker(${complaint.id})" 
+${complaint.workerUsername ? 'disabled' : ''} class="btn btn-primary">
+Auto-assign Worker
+</button>
+            </div>
         </div>
     `).join('');
 }
@@ -86,6 +97,7 @@ function viewComplaint(id) {
     document.getElementById('modalCategory').value = complaint.category;
     document.getElementById('modalDescription').value = complaint.description;
     document.getElementById('modalStatus').value = complaint.status;
+    document.getElementById('modalWorkerComments').value = complaint.workerComments || '';
 
     const modal = document.getElementById('complaintModal');
     modal.style.display = 'block';

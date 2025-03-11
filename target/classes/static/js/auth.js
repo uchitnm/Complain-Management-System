@@ -74,3 +74,19 @@ function logout() {
     localStorage.removeItem('user');
     window.location.href = '/login.html';
 }
+
+function displayUserInfo() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (user) {
+        const userElement = document.getElementById('currentUser');
+        if (userElement) {
+            userElement.textContent = user.username;
+        }
+    }
+}
+
+// Update existing DOMContentLoaded listeners in each dashboard
+document.addEventListener('DOMContentLoaded', () => {
+    displayUserInfo();
+    // ... other initialization code ...
+});

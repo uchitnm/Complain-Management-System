@@ -7,7 +7,21 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <button onclick="logout()" class="btn logout-btn">Logout</button>
+    <div class="menu-bar">
+        <div class="header-row">
+            <h1>Admin Dashboard</h1>
+            <div class="user-info">
+                <span class="username" id="currentUser"></span>
+                <span class="role-badge">Admin</span>
+                <button onclick="logout()" class="btn logout-btn">Logout</button>
+            </div>
+        </div>
+        <nav class="menu-nav">
+            <a href="#" onclick="showInfo('option1')">Your Profile</a>
+            <a href="#" onclick="showInfo('option2')">Option 2</a>
+            <a href="#" onclick="showInfo('option3')">Option 3</a>
+        </nav>
+    </div>
     <div class="container">
         <div class="card">
             <h2>All Complaints</h2>
@@ -73,6 +87,10 @@
                         <option value="RESOLVED">Resolved</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>Worker Comments:</label>
+                    <textarea id="modalWorkerComments" rows="4" readonly></textarea>
+                </div>
                 <div class="button-group">
                     <button type="button" class="btn btn-primary" onclick="saveComplaint()">Save</button>
                     <button type="button" class="btn btn-danger" onclick="deleteComplaint()">Delete</button>
@@ -81,7 +99,16 @@
         </div>
     </div>
 
+    <!-- Info Box -->
+    <div class="info-box-overlay" id="infoOverlay" onclick="hideInfo()"></div>
+    <div class="info-box" id="infoBox">
+        <h3 id="infoTitle"></h3>
+        <p id="infoContent"></p>
+        <button class="btn btn-primary" onclick="hideInfo()">Close</button>
+    </div>
+
     <script src="/js/auth.js"></script>
+    <script src="/js/menu.js"></script>
     <script src="/js/admin-dashboard.js"></script>
 </body>
 </html>

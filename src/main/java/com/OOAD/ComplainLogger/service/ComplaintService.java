@@ -35,10 +35,10 @@ public class ComplaintService {
         if (worker == null || worker.getRole() != Role.WORKER) {
             throw new RuntimeException("Invalid worker username");
         }
-        return complaintRepository.findWorkerComplaints(
-            username,
-            worker.getWorkerCategory(),
-            ComplaintStatus.OPEN
+        // Return assigned complaints and available complaints (not resolved)
+        return complaintRepository.findByWorkerUsernameOrAvailableComplaints(
+            worker.getUsername(),
+            worker.getWorkerCategory()
         );
     }
 
@@ -113,9 +113,18 @@ public class ComplaintService {
         String originalStudent = existingComplaint.getStudentUsername();
         String originalWorker = existingComplaint.getWorkerUsername();
         
-        existingComplaint.setCategory(updatedComplaint.getCategory());
-        existingComplaint.setDescription(updatedComplaint.getDescription());
-        existingComplaint.setStatus(updatedComplaint.getStatus());
+        if (updatedComplaint.getWorkerComments() != null) {
+            existingComplaint.setWorkerComments(updatedComplaint.getWorkerComments());
+        }
+        if (updatedComplaint.getCategory() != null) {
+            existingComplaint.setCategory(updatedComplaint.getCategory());
+        }
+        if (updatedComplaint.getDescription() != null) {
+            existingComplaint.setDescription(updatedComplaint.getDescription());
+        }
+        if (updatedComplaint.getStatus() != null) {
+            existingComplaint.setStatus(updatedComplaint.getStatus());
+        }
         
         // Preserve original user information
         existingComplaint.setStudentUsername(originalStudent);

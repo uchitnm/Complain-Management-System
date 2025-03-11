@@ -52,13 +52,21 @@ async function loadComplaints() {
 function displayComplaints(complaints) {
     const complaintsContainer = document.getElementById('complaints-list');
     complaintsContainer.innerHTML = complaints.map(complaint => `
-        <div class="complaint-item">
+        <div class="complaint-item ${complaint.status.toLowerCase()}">
             <h3>${complaint.category}</h3>
             <p>${complaint.description}</p>
             <p>Status: ${complaint.status}</p>
             <p>Created: ${new Date(complaint.createdAt).toLocaleDateString()}</p>
+            ${complaint.workerUsername ? `<p>Assigned to: ${complaint.workerUsername}</p>` : ''}
+            ${complaint.workerComments ? `
+                <div class="worker-comments">
+                    <h4>Worker Notes:</h4>
+                    <p>${complaint.workerComments}</p>
+                </div>
+            ` : ''}
             ${complaint.resolvedAt ? 
                 `<p>Resolved: ${new Date(complaint.resolvedAt).toLocaleDateString()}</p>` : ''}
+            <p class="last-updated">Last Updated: ${new Date(complaint.lastUpdated || complaint.createdAt).toLocaleString()}</p>
         </div>
     `).join('');
 }
