@@ -27,6 +27,9 @@ public class Complaint {
     @Column
     private LocalDateTime resolvedAt;
 
+    @Column
+    private String workerUsername;
+
     // Constructors
     public Complaint() {
         this.createdAt = LocalDateTime.now();
@@ -91,5 +94,13 @@ public class Complaint {
 
     public void setResolvedAt(LocalDateTime resolvedAt) {
         this.resolvedAt = resolvedAt;
+    }
+
+    public String getWorkerUsername() {
+        return workerUsername;
+    }
+
+    public void setWorkerUsername(String workerUsername) {
+        this.workerUsername = workerUsername;
     }
 }

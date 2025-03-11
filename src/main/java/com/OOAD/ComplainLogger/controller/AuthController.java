@@ -4,6 +4,7 @@ import com.OOAD.ComplainLogger.model.User;
 import com.OOAD.ComplainLogger.service.AuthService;
 import com.OOAD.ComplainLogger.model.Role;
 import com.OOAD.ComplainLogger.exception.DuplicateUsernameException;
+import com.OOAD.ComplainLogger.response.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,16 +66,4 @@ class RegisterRequest {
     public void setPassword(String password) { this.password = password; }
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
-}
-
-class ErrorResponse {
-    private String message;
-    
-    public ErrorResponse(String message) {
-        this.message = message;
-    }
-    
-    public String getMessage() {
-        return message;
-    }
 }

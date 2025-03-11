@@ -22,6 +22,9 @@ public class User {
     @Column
     private LocalDateTime lastLoginDate;
 
+    @Column
+    private String workerCategory;  // e.g., "PLUMBER", "CARPENTER", "ELECTRICIAN"
+
     // Constructors
     public User() {}
 
@@ -29,6 +32,13 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public User(String username, String password, Role role, String workerCategory) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.workerCategory = workerCategory;
     }
 
     // Getters & Setters
@@ -70,6 +80,14 @@ public class User {
 
     public void setLastLoginDate(LocalDateTime lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
+    }
+
+    public String getWorkerCategory() {
+        return workerCategory;
+    }
+
+    public void setWorkerCategory(String workerCategory) {
+        this.workerCategory = workerCategory;
     }
 
 }

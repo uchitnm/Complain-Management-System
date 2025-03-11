@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Complaint Management System</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>All Complaints</h2>
+            <div class="filters">
+                <div class="form-group">
+                    <label for="searchStudent">Search by Student:</label>
+                    <input type="text" id="searchStudent" placeholder="Student username...">
+                </div>
+                <div class="form-group">
+                    <label for="categoryFilter">Category:</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="PLUMBER">Plumber</option>
+                        <option value="CARPENTER">Carpenter</option>
+                        <option value="ELECTRICIAN">Electrician</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="statusFilter">Status:</label>
+                    <select id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="OPEN">Open</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+            </div>
+            <div id="complaints-list" class="complaint-list"></div>
+        </div>
+    </div>
+
+    <!-- Complaint Details Modal -->
+    <div id="complaintModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Complaint Details</h2>
+            <form id="complaintForm">
+                <input type="hidden" id="complaintId">
+                <div class="form-group">
+                    <label>Student:</label>
+                    <input type="text" id="modalStudent" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <select id="modalCategory">
+                        <option value="PLUMBER">Plumber</option>
+                        <option value="CARPENTER">Carpenter</option>
+                        <option value="ELECTRICIAN">Electrician</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <textarea id="modalDescription" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Status:</label>
+                    <select id="modalStatus">
+                        <option value="OPEN">Open</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-primary" onclick="saveComplaint()">Save</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteComplaint()">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/admin-dashboard.js"></script>
+</body>
+</html>
