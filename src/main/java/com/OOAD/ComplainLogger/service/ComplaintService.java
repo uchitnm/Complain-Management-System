@@ -23,7 +23,42 @@ public class ComplaintService {
 
     public Complaint logComplaint(String studentUsername, String category, String description) {
         Complaint complaint = new Complaint(studentUsername, category, description);
+        try {
+            List<User> availableWorkers = userRepository.findByRoleAndWorkerCategory(Role.WORKER, category);
+            if (!availableWorkers.isEmpty()) {
+                User selectedWorker = findLeastLoadedWorker(availableWorkers);
+                complaint.setWorkerUsername(selectedWorker.getUsername());
+                complaint.setStatus(ComplaintStatus.IN_PROGRESS);
+            }
+        } catch (Exception e) {
+            System.err.println("Auto-assignment failed: " + e.getMessage());
+        }
         return complaintRepository.save(complaint);
+    }
+
+    private User findLeastLoadedWorker(List<User> workers) {
+        return workers.stream()
+            .map(worker -> new WorkerLoad(worker, getWorkerActiveComplaintCount(worker)))
+            .min((w1, w2) -> Long.compare(w1.activeComplaints, w2.activeComplaints))
+            .map(workerLoad -> workerLoad.worker)
+            .orElse(workers.get(0));
+    }
+
+    private long getWorkerActiveComplaintCount(User worker) {
+        return complaintRepository.findByWorkerUsername(worker.getUsername())
+            .stream()
+            .filter(c -> c.getStatus() != ComplaintStatus.RESOLVED)
+            .count();
+    }
+
+    private static class WorkerLoad {
+        final User worker;
+        final long activeComplaints;
+
+        WorkerLoad(User worker, long activeComplaints) {
+            this.worker = worker;
+            this.activeComplaints = activeComplaints;
+        }
     }
 
     public List<Complaint> getStudentComplaints(String username) {
@@ -65,9 +100,8 @@ public class ComplaintService {
             throw new RuntimeException("No workers available for category: " + complaint.getCategory());
         }
         
-        // Simple round-robin assignment
-        User worker = availableWorkers.get(0);
-        complaint.setWorkerUsername(worker.getUsername());
+        User selectedWorker = findLeastLoadedWorker(availableWorkers);
+        complaint.setWorkerUsername(selectedWorker.getUsername());
         complaint.setStatus(ComplaintStatus.IN_PROGRESS);
         
         return complaintRepository.save(complaint);

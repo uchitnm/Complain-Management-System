@@ -23,10 +23,16 @@ function displayComplaints(complaints) {
     const complaintsContainer = document.getElementById('complaints-list');
     const user = JSON.parse(localStorage.getItem('user'));
     
-    // Separate complaints into categories
-    const myActiveComplaints = complaints.filter(c => c.workerUsername === user.username && c.status !== 'RESOLVED');
-    const myCompletedComplaints = complaints.filter(c => c.workerUsername === user.username && c.status === 'RESOLVED');
-    const availableComplaints = complaints.filter(c => !c.workerUsername);
+    // Only show complaints assigned to this worker
+    const myActiveComplaints = complaints.filter(c => 
+        c.workerUsername === user.username && 
+        c.status !== 'RESOLVED'
+    );
+    
+    const myCompletedComplaints = complaints.filter(c => 
+        c.workerUsername === user.username && 
+        c.status === 'RESOLVED'
+    );
 
     complaintsContainer.innerHTML = `
         <div class="complaints-section">
@@ -38,13 +44,6 @@ function displayComplaints(complaints) {
             <h3>Completed Jobs</h3>
             ${renderComplaints(myCompletedComplaints, user, false)}
         </div>
-        
-        ${availableComplaints.length > 0 ? `
-            <div class="complaints-section">
-                <h3>Available Jobs</h3>
-                ${renderComplaints(availableComplaints, user, false)}
-            </div>
-        ` : ''}
     `;
 }
 
@@ -63,37 +62,26 @@ function renderComplaints(complaints, user, showStatusUpdate) {
             ${complaint.resolvedAt ? 
                 `<p>Resolved: ${new Date(complaint.resolvedAt).toLocaleDateString()}</p>` : ''}
             
-            ${complaint.workerUsername === user.username ? `
-                <div class="worker-comments">
-                    <h4>Work Notes:</h4>
-                    <p>${complaint.workerComments || 'No comments yet'}</p>
-                    ${showStatusUpdate ? `
-                        <textarea class="comment-input" 
-                            id="comment-${complaint.id}" 
-                            placeholder="Add work notes..."
-                            rows="2">${complaint.workerComments || ''}</textarea>
-                        <button onclick="saveComments(${complaint.id})" 
-                            class="btn btn-primary">Save Notes</button>
-                    ` : ''}
-                </div>
+            <div class="worker-comments">
+                <h4>Work Notes:</h4>
+                <p>${complaint.workerComments || 'No comments yet'}</p>
                 ${showStatusUpdate ? `
-                    <div class="form-group">
-                        <select onchange="updateStatus('${complaint.id}', this.value)">
-                            <option value="OPEN" ${complaint.status === 'OPEN' ? 'selected' : ''}>Open</option>
-                            <option value="IN_PROGRESS" ${complaint.status === 'IN_PROGRESS' ? 'selected' : ''}>In Progress</option>
-                            <option value="RESOLVED" ${complaint.status === 'RESOLVED' ? 'selected' : ''}>Resolved</option>
-                        </select>
-                    </div>
+                    <textarea class="comment-input" 
+                        id="comment-${complaint.id}" 
+                        placeholder="Add work notes..."
+                        rows="2">${complaint.workerComments || ''}</textarea>
+                    <button onclick="saveComments(${complaint.id})" 
+                        class="btn btn-primary">Save Notes</button>
                 ` : ''}
-            ` : `
-                <div class="button-group">
-                    <button onclick="assignToMe(${complaint.id})" 
-                        class="btn btn-primary"
-                        ${complaint.workerUsername ? 'disabled' : ''}>
-                        Take Assignment
-                    </button>
+            </div>
+            ${showStatusUpdate ? `
+                <div class="form-group">
+                    <select onchange="updateStatus('${complaint.id}', this.value)">
+                        <option value="IN_PROGRESS" ${complaint.status === 'IN_PROGRESS' ? 'selected' : ''}>In Progress</option>
+                        <option value="RESOLVED" ${complaint.status === 'RESOLVED' ? 'selected' : ''}>Resolved</option>
+                    </select>
                 </div>
-            `}
+            ` : ''}
         </div>
     `).join('');
 }
@@ -159,6 +147,7 @@ async function assignToMe(complaintId) {
             throw new Error('Failed to assign complaint');
         }
 
+        // Refresh the complaints list to show updated assignments
         await loadWorkerComplaints();
     } catch (error) {
         console.error('Error:', error);

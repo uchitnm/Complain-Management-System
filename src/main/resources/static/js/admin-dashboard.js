@@ -92,15 +92,49 @@ function viewComplaint(id) {
     const complaint = currentComplaints.find(c => c.id === id);
     if (!complaint) return;
 
-    document.getElementById('complaintId').value = complaint.id;
-    document.getElementById('modalStudent').value = complaint.studentUsername;
-    document.getElementById('modalCategory').value = complaint.category;
-    document.getElementById('modalDescription').value = complaint.description;
-    document.getElementById('modalStatus').value = complaint.status;
-    document.getElementById('modalWorkerComments').value = complaint.workerComments || '';
+    // Add worker reassignment dropdown when viewing complaint
+    fetch('/api/users/workers/' + complaint.category)
+        .then(response => response.json())
+        .then(workers => {
+            const workerSelect = workers.map(w => 
+                `<option value="${w.username}" ${w.username === complaint.workerUsername ? 'selected' : ''}>
+                    ${w.username}
+                </option>`
+            ).join('');
 
-    const modal = document.getElementById('complaintModal');
-    modal.style.display = 'block';
+            document.getElementById('complaintId').value = complaint.id;
+            document.getElementById('modalStudent').value = complaint.studentUsername;
+            document.getElementById('modalCategory').value = complaint.category;
+            document.getElementById('modalDescription').value = complaint.description;
+            document.getElementById('modalStatus').value = complaint.status;
+            document.getElementById('modalWorkerComments').value = complaint.workerComments || '';
+            document.getElementById('modalWorker').innerHTML = workerSelect;
+        });
+
+    document.getElementById('complaintModal').style.display = 'block';
+}
+
+// Add worker reassignment function
+async function reassignWorker(complaintId, newWorkerUsername) {
+    try {
+        const response = await fetch(`/api/complaints/${complaintId}/assign`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newWorkerUsername)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to reassign worker');
+        }
+
+        document.getElementById('complaintModal').style.display = 'none';
+        applyFilters();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to reassign worker: ' + error.message);
+    }
 }
 
 async function saveComplaint() {

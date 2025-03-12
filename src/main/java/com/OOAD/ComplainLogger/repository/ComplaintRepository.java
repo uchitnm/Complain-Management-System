@@ -31,8 +31,8 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     );
 
     @Query("SELECT c FROM Complaint c WHERE " +
-           "c.workerUsername = :workerUsername OR " +
-           "(c.category = :category AND c.status = 'OPEN' AND c.workerUsername IS NULL)")
+           "(c.workerUsername = :workerUsername) OR " +  // Get assigned complaints
+           "(c.category = :category AND c.workerUsername IS NULL)")  // Get unassigned complaints
     List<Complaint> findByWorkerUsernameOrAvailableComplaints(
         @Param("workerUsername") String workerUsername,
         @Param("category") String category
