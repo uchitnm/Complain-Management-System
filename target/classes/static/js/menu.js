@@ -2,8 +2,9 @@ function showInfo(option) {
     const user = JSON.parse(localStorage.getItem('user') || 'null');
     if (!user) return;
 
-    const infoBox = document.getElementById('infoBox');
-    const infoOverlay = document.getElementById('infoOverlay');
+    // Create a new Bootstrap modal instance
+    const modalEl = document.getElementById('infoModal');
+    const modal = new bootstrap.Modal(modalEl);
     const infoTitle = document.getElementById('infoTitle');
     const infoContent = document.getElementById('infoContent');
 
@@ -40,13 +41,14 @@ function showInfo(option) {
             break;
     }
 
-    infoBox.style.display = 'block';
-    infoOverlay.style.display = 'block';
+    modal.show();
 }
 
-function hideInfo() {
-    const infoBox = document.getElementById('infoBox');
-    const infoOverlay = document.getElementById('infoOverlay');
-    infoBox.style.display = 'none';
-    infoOverlay.style.display = 'none';
-}
+// Initialize all tooltips and popovers if any
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize Bootstrap components
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});

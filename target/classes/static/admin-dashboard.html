@@ -4,114 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Complaint Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <div class="menu-bar">
-        <div class="header-row">
-            <h1>Admin Dashboard</h1>
-            <div class="user-info">
-                <span class="username" id="currentUser"></span>
-                <span class="role-badge">Admin</span>
-                <button onclick="logout()" class="btn logout-btn">Logout</button>
+    <header class="bg-primary text-white p-3">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0">Admin Dashboard</h1>
+                    <p class="mb-0">Manage all hostel complaints</p>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="me-3" id="currentUser"></span>
+                    <span class="badge bg-light text-primary me-3">Admin</span>
+                    <button onclick="logout()" class="btn btn-danger">Logout</button>
+                </div>
+            </div>
+            <nav class="mt-2">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#" onclick="showInfo('option1')">Your Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#" onclick="showInfo('option2')">Get Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#" onclick="showInfo('option3')">About Us</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">All Complaints</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="searchStudent" placeholder="Search by student...">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="categoryFilter">
+                                    <option value="">All Categories</option>
+                                    <option value="PLUMBER">Plumber</option>
+                                    <option value="CARPENTER">Carpenter</option>
+                                    <option value="ELECTRICIAN">Electrician</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">All Statuses</option>
+                                    <option value="OPEN">Open</option>
+                                    <option value="IN_PROGRESS">In Progress</option>
+                                    <option value="RESOLVED">Resolved</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100" onclick="applyFilters()">Apply Filters</button>
+                            </div>
+                        </div>
+                        <div id="complaints-list"></div>
+                    </div>
+                </div>
             </div>
         </div>
-        <nav class="menu-nav">
-            <a href="#" onclick="showInfo('option1')">Your Profile</a>
-            <a href="#" onclick="showInfo('option2')">Option 2</a>
-            <a href="#" onclick="showInfo('option3')">Option 3</a>
-        </nav>
     </div>
-    <div class="container">
-        <div class="card">
-            <h2>All Complaints</h2>
-            <div class="filters">
-                <div class="form-group">
-                    <label for="searchStudent">Search by Student:</label>
-                    <input type="text" id="searchStudent" placeholder="Student username...">
+
+    <!-- Bootstrap Modal for Complaint Details -->
+    <div class="modal fade" id="complaintModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Complaint Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="form-group">
-                    <label for="categoryFilter">Category:</label>
-                    <select id="categoryFilter">
-                        <option value="">All Categories</option>
-                        <option value="PLUMBER">Plumber</option>
-                        <option value="CARPENTER">Carpenter</option>
-                        <option value="ELECTRICIAN">Electrician</option>
-                        <option value="OTHER">Other</option>
-                    </select>
+                <div class="modal-body">
+                    <form id="complaintForm">
+                        <input type="hidden" id="complaintId">
+                        <div class="form-group">
+                            <label>Student:</label>
+                            <input type="text" id="modalStudent" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Category:</label>
+                            <select id="modalCategory">
+                                <option value="PLUMBER">Plumber</option>
+                                <option value="CARPENTER">Carpenter</option>
+                                <option value="ELECTRICIAN">Electrician</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <textarea id="modalDescription" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <select id="modalStatus">
+                                <option value="OPEN">Open</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="RESOLVED">Resolved</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Worker:</label>
+                            <select id="modalWorker" onchange="reassignWorker(document.getElementById('complaintId').value, this.value)">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Worker Comments:</label>
+                            <textarea id="modalWorkerComments" rows="4" readonly></textarea>
+                        </div>
+                        <div class="button-group mt-3">
+                            <button type="button" class="btn btn-primary" onclick="saveComplaint()">Save</button>
+                            <button type="button" class="btn btn-danger ms-2" onclick="deleteComplaint()">
+                                <i class="bi bi-trash"></i> Delete Complaint
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="statusFilter">Status:</label>
-                    <select id="statusFilter">
-                        <option value="">All Statuses</option>
-                        <option value="OPEN">Open</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="RESOLVED">Resolved</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
             </div>
-            <div id="complaints-list" class="complaint-list"></div>
         </div>
     </div>
 
-    <!-- Complaint Details Modal -->
-    <div id="complaintModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Complaint Details</h2>
-            <form id="complaintForm">
-                <input type="hidden" id="complaintId">
-                <div class="form-group">
-                    <label>Student:</label>
-                    <input type="text" id="modalStudent" readonly>
-                </div>
-                <div class="form-group">
-                    <label>Category:</label>
-                    <select id="modalCategory">
-                        <option value="PLUMBER">Plumber</option>
-                        <option value="CARPENTER">Carpenter</option>
-                        <option value="ELECTRICIAN">Electrician</option>
-                        <option value="OTHER">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Description:</label>
-                    <textarea id="modalDescription" rows="4"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Status:</label>
-                    <select id="modalStatus">
-                        <option value="OPEN">Open</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="RESOLVED">Resolved</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Worker:</label>
-                    <select id="modalWorker" onchange="reassignWorker(document.getElementById('complaintId').value, this.value)">
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Worker Comments:</label>
-                    <textarea id="modalWorkerComments" rows="4" readonly></textarea>
-                </div>
-                <div class="button-group">
-                    <button type="button" class="btn btn-primary" onclick="saveComplaint()">Save</button>
-                    <button type="button" class="btn btn-danger" onclick="deleteComplaint()">Delete</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Info Box -->
-    <div class="info-box-overlay" id="infoOverlay" onclick="hideInfo()"></div>
-    <div class="info-box" id="infoBox">
-        <h3 id="infoTitle"></h3>
-        <p id="infoContent"></p>
-        <button class="btn btn-primary" onclick="hideInfo()">Close</button>
-    </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/menu.js"></script>
     <script src="/js/admin-dashboard.js"></script>
