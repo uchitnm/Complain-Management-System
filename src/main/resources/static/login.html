@@ -6,14 +6,68 @@
     <title>Login - Complaint Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* Background Image */
+        body {
+            background: url('/images/I2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Aurora Effect */
+        .animated-text {
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6ec4, #7873f5, #00d4ff, #ff6ec4);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: aurora 5s linear infinite;
+        }
+
+        @keyframes aurora {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 10px;
+        }
+
+        /* Updated Header */
+        .header-container {
+            background: rgba(0, 123, 255, 0.85);
+            width: 100%;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 100px;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <header class="bg-primary text-white text-center py-4 mb-4">
-        <h1 class="display-4">Complaint Management System</h1>
-        <p class="lead">Welcome to your hostel service portal</p>
+<body>
+    <header class="header-container text-white text-center">
+        <img src="\images\I3.webp" alt="Logo" class="logo">
+        <div>
+            <h1 class="display-4">Complaint Management System</h1>
+            <p class="lead animated-text">Welcome to your hostel service portal</p>
+        </div>
     </header>
 
-    <div class="container vh-100 d-flex align-items-center justify-content-center">
+    <div class="container flex-grow-1 d-flex align-items-center justify-content-center">
         <div class="card shadow col-md-6 col-lg-4">
             <div class="card-body p-4">
                 <h2 class="text-center mb-4">Login</h2>
@@ -32,6 +86,7 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/auth.js"></script>
 </body>
