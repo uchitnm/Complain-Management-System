@@ -6,6 +6,7 @@
     <title>Admin Dashboard - Complaint Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
+    
 </head>
 <body>
     <header class="bg-primary text-white p-3">
@@ -88,47 +89,63 @@
                 <div class="modal-body">
                     <form id="complaintForm">
                         <input type="hidden" id="complaintId">
-                        <div class="form-group">
-                            <label>Student:</label>
-                            <input type="text" id="modalStudent" readonly>
+                        <div class="mb-3">
+                            <label class="form-label">Student:</label>
+                            <input type="text" class="form-control" id="modalStudent" readonly>
                         </div>
-                        <div class="form-group">
-                            <label>Category:</label>
-                            <select id="modalCategory">
+                        <div class="mb-3">
+                            <label class="form-label">Category:</label>
+                            <select class="form-select" id="modalCategory">
                                 <option value="PLUMBER">Plumber</option>
                                 <option value="CARPENTER">Carpenter</option>
                                 <option value="ELECTRICIAN">Electrician</option>
                                 <option value="OTHER">Other</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Description:</label>
-                            <textarea id="modalDescription" rows="4"></textarea>
+                        <div class="mb-3">
+                            <label class="form-label">Description:</label>
+                            <textarea class="form-control" id="modalDescription" rows="4"></textarea>
                         </div>
-                        <div class="form-group">
-                            <label>Status:</label>
-                            <select id="modalStatus">
+                        <div class="mb-3">
+                            <label class="form-label">Status:</label>
+                            <select class="form-select" id="modalStatus">
                                 <option value="OPEN">Open</option>
                                 <option value="IN_PROGRESS">In Progress</option>
                                 <option value="RESOLVED">Resolved</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Worker:</label>
-                            <select id="modalWorker" onchange="reassignWorker(document.getElementById('complaintId').value, this.value)">
-                            </select>
+                        <div class="mb-3">
+                            <label class="form-label">Assign Worker:</label>
+                            <select class="form-select" id="modalWorker"></select>
                         </div>
-                        <div class="form-group">
-                            <label>Worker Comments:</label>
-                            <textarea id="modalWorkerComments" rows="4" readonly></textarea>
-                        </div>
-                        <div class="button-group mt-3">
-                            <button type="button" class="btn btn-primary" onclick="saveComplaint()">Save</button>
-                            <button type="button" class="btn btn-danger ms-2" onclick="deleteComplaint()">
-                                <i class="bi bi-trash"></i> Delete Complaint
-                            </button>
+                        <div class="mb-3">
+                            <label class="form-label">Worker Comments:</label>
+                            <textarea class="form-control" id="modalWorkerComments" rows="4" readonly></textarea>
                         </div>
                     </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveComplaint()">Save</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteComplaint()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="infoContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -138,5 +155,10 @@
     <script src="/js/auth.js"></script>
     <script src="/js/menu.js"></script>
     <script src="/js/admin-dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            applyFilters(); // This will load all complaints initially
+        });
+    </script>
 </body>
 </html>
