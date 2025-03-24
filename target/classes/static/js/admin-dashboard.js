@@ -57,42 +57,15 @@ function displayComplaints(complaints) {
             <p class="last-updated">Last Updated: ${new Date(complaint.lastUpdated || complaint.createdAt).toLocaleString()}</p>
             <div class="button-group">
                 <button onclick="viewComplaint(${complaint.id})" class="btn btn-primary">View/Edit</button>
-                <button onclick="autoAssignWorker(${complaint.id})" 
-${complaint.workerUsername ? 'disabled' : ''} class="btn btn-primary">
-Auto-assign Worker
-</button>
             </div>
         </div>
     `).join('');
-}
-
-{/* <button type="button" class="btn btn-danger" onclick="deleteComplaint()">Delete</button> */}
-{/* <button onclick="autoAssignWorker(${complaint.id})" 
-${complaint.workerUsername ? 'disabled' : ''} class="btn btn-primary">
-Auto-assign Worker
-</button> */}
-
-async function autoAssignWorker(complaintId) {
-    try {
-        const response = await fetch(`/api/complaints/${complaintId}/auto-assign`, {
-            method: 'PUT'
-        });
-        if (response.ok) {
-            applyFilters();
-        } else {
-            alert('Failed to assign worker');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to assign worker');
-    }
 }
 
 function viewComplaint(id) {
     const complaint = currentComplaints.find(c => c.id === id);
     if (!complaint) return;
 
-    // Add worker reassignment dropdown when viewing complaint
     fetch('/api/users/workers/' + complaint.category)
         .then(response => response.json())
         .then(workers => {
@@ -109,32 +82,11 @@ function viewComplaint(id) {
             document.getElementById('modalStatus').value = complaint.status;
             document.getElementById('modalWorkerComments').value = complaint.workerComments || '';
             document.getElementById('modalWorker').innerHTML = workerSelect;
+            
+            // Use Bootstrap modal show method
+            const modal = new bootstrap.Modal(document.getElementById('complaintModal'));
+            modal.show();
         });
-
-    document.getElementById('complaintModal').style.display = 'block';
-}
-
-// Add worker reassignment function
-async function reassignWorker(complaintId, newWorkerUsername) {
-    try {
-        const response = await fetch(`/api/complaints/${complaintId}/assign`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newWorkerUsername)
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to reassign worker');
-        }
-
-        document.getElementById('complaintModal').style.display = 'none';
-        applyFilters();
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to reassign worker: ' + error.message);
-    }
 }
 
 async function saveComplaint() {
@@ -142,12 +94,12 @@ async function saveComplaint() {
     const updatedComplaint = {
         category: document.getElementById('modalCategory').value,
         description: document.getElementById('modalDescription').value,
-        status: document.getElementById('modalStatus').value,
-        studentUsername: document.getElementById('modalStudent').value
+        status: document.getElementById('modalStatus').value
     };
 
     try {
-        const response = await fetch(`/api/complaints/${id}`, {
+        // Update complaint details
+        const updateResponse = await fetch(`/api/complaints/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -155,13 +107,14 @@ async function saveComplaint() {
             body: JSON.stringify(updatedComplaint)
         });
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Failed to update complaint');
+        if (!updateResponse.ok) {
+            throw new Error('Failed to update complaint');
         }
 
-        document.getElementById('complaintModal').style.display = 'none';
-        applyFilters();
+        // Close modal and refresh
+        const modal = bootstrap.Modal.getInstance(document.getElementById('complaintModal'));
+        modal.hide();
+        await applyFilters();
     } catch (error) {
         console.error('Error:', error);
         alert(error.message);
@@ -178,7 +131,8 @@ async function deleteComplaint() {
         });
 
         if (response.ok) {
-            document.getElementById('complaintModal').style.display = 'none';
+            const modal = bootstrap.Modal.getInstance(document.getElementById('complaintModal'));
+            modal.hide();
             applyFilters();
         } else {
             alert('Failed to delete complaint');
@@ -191,13 +145,15 @@ async function deleteComplaint() {
 
 // Close modal when clicking the X or outside the modal
 document.querySelector('.close').onclick = function() {
-    document.getElementById('complaintModal').style.display = 'none';
+    const modal = bootstrap.Modal.getInstance(document.getElementById('complaintModal'));
+    modal.hide();
 }
 
 window.onclick = function(event) {
     const modal = document.getElementById('complaintModal');
     if (event.target == modal) {
-        modal.style.display = 'none';
+        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+        bootstrapModal.hide();
     }
 }
 
